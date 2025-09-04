@@ -1,0 +1,594 @@
+<%- include('../header')%>
+    <!-- [ Main Content ] start -->
+    <section class="pc-container">
+        <div class="pc-content">
+            <!-- [ breadcrumb ] start -->
+            <div class="page-header">
+                <div class="page-block">
+                    <div class="row align-items-center">
+                        <div class="col-md-12">
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="../dashboard/index.html">Home</a></li>
+                                <li class="breadcrumb-item"><a href="javascript: void(0)">Forms</a></li>
+                                <li class="breadcrumb-item" aria-current="page">TypeAhead</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4 d-flex">
+                            <div class="page-header-title">
+                                <h2 class="mb-0">Product</h2>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <form class="header-search">
+                                <input type="search" class="form-control" id="searchInput"
+                                    placeholder="Search here. . ." onkeyup="searchTable()">
+                            </form>
+                        </div>
+                        <div class="col-md-4 d-flex justify-content-end">
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#staticBackdrop">
+                                Add
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- [ breadcrumb ] end -->
+
+
+
+
+
+
+            <!-- [ Main Content ] start -->
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <% if(locals?.message?.success){ %>
+                        <div class="alert alert-success" role="alert">
+                            <strong>Success!</strong>
+                            <%= locals.message.success %>
+                        </div>
+                        <% } %>
+                            <!-- [ form-element ] start -->
+
+
+
+
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static"
+                                data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="staticBackdropLabel">add product</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <form action="/product/insertproduct" method="post"
+                                                        enctype="multipart/form-data">
+                                                        <div class="form-group row my-3">
+                                                            <label
+                                                                class="col-form-label  text-lg-start">Category</label>
+                                                            <div>
+                                                                <div class="typeahead">
+                                                                    <select name="category" id="category"
+                                                                        class="form-control"
+                                                                        onchange="categoryRecord()">
+                                                                        <option value="">-- Select Category --</option>
+                                                                        <% category.map((cat,index)=>{%>
+                                                                            <option value="<%= cat?.id%>">
+                                                                                <%=cat?.category%>
+                                                                            </option>
+                                                                            <%}) %>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row my-3">
+                                                            <label class="col-form-label text-lg-start">Sub
+                                                                Category</label>
+                                                            <div>
+                                                                <div class="typeahead">
+                                                                    <select class="form-control"
+                                                                        onchange="subcategoryRecord()" id="subcategory"
+                                                                        name="subcategory">
+                                                                        <option value="">Select a subcategory</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row my-3">
+                                                            <label
+                                                                class="col-form-label text-lg-start">ExSubCategory</label>
+                                                            <div>
+                                                                <div class="typeahead">
+                                                                    <select name="exsubcategory" id="exsubcategory"
+                                                                        class="form-control">
+                                                                        <option>-- Select Exsubcategory --</option>
+                                                                        <% exsubcategory.map((val)=>{ %>
+                                                                            <option value="<%= val.id%>">
+                                                                                <% val.exsubcategory %>
+                                                                            </option>
+                                                                            <% }) %>
+
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="form-group row mb-3">
+                                                            <label class="col-form-label  text-lg-start">Product</label>
+                                                            <div>
+                                                                <div class="typeahead">
+                                                                    <input class="form-control" name="product"
+                                                                        type="text" placeholder="product">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row mb-3">
+                                                            <label class="col-form-label  text-lg-start">Price</label>
+                                                            <div>
+                                                                <div class="typeahead">
+                                                                    <input class="form-control" name="price"
+                                                                        type="number" placeholder="Price">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row mb-3">
+                                                            <label
+                                                                class="col-form-label  text-lg-start">Description</label>
+                                                            <div>
+                                                                <div class="typeahead">
+                                                                    <input class="form-control" name="description"
+                                                                        type="text" placeholder="Description">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row mb-3">
+                                                            <label class="col-form-label  text-lg-start">Image</label>
+                                                            <div>
+                                                                <div class="typeahead">
+                                                                    <input class="form-control" name="image"
+                                                                        type="file">
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="text-end p-4 pb-sm-2">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Close</button>
+                                                            <button type="submit"
+                                                                class="btn btn-primary d-inline-flex align-item-center">Submit</button>
+                                                            </button>
+                                                        </div>
+
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                </div>
+            </div>
+            <!-- [ Main Content ] end -->
+
+
+            <!-- [ Main Content ] start -->
+            <div class="row">
+                <!-- [ sample-page ] start -->
+                <div class="col-sm-12">
+
+                    <% if(locals?.message?.delete){%>
+                        <div class="alert alert-danger" role="alert">
+                            <%= locals.message.delete %>
+                        </div>
+                        <%}%>
+
+
+
+                            <div class="card table-card">
+
+                                <div class="card-body">
+
+                                    <div class="table-responsive">
+                                        <table class="table table-hover text-center" id="pc-dt-simple">
+                                            <thead>
+                                                <tr>
+                                                    <th>Id</th>
+                                                    <th>Category Name</th>
+                                                    <th>Sub Category</th>
+                                                    <th>Exsub Category</th>
+                                                    <th>Product</th>
+                                                    <th>Price</th>
+                                                    <th>Description</th>
+                                                    <th>Image</th>
+                                                    <th>Status</th>
+                                                    <th class="text-center">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                <% product.map((pro,index)=>{ %>
+                                                    <tr>
+                                                        <td>
+                                                            <%= ++index %>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="mb-0">
+                                                                <%= pro?.categoryId?.category %>
+                                                            </h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="mb-0">
+                                                                <%= pro?.subcategoryId?.subcategory %>
+                                                            </h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="mb-0">
+                                                                <%= pro?.exsubcategoryId?.exsubcategory%>
+
+                                                            </h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6>
+                                                                <%= pro?.product %>
+                                                            </h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6>
+                                                                <%= pro?.price %>
+                                                            </h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6>
+                                                                <%= pro?.description %>
+                                                            </h6>
+                                                        </td>
+                                                        <td>
+                                                            <img src="/uploads/<%= pro.image %>" alt="image"
+                                                                width="170px">
+                                                        </td>
+
+                                                        <td>
+                                                            <% if (pro?.status==="active" ) { %>
+                                                                <a href="#" class="badge bg-light-success f-12">
+                                                                    <%= pro?.status %>
+                                                                </a>
+                                                                <% } else { %>
+                                                                    <a href="#" class="badge bg-light-danger f-12">
+                                                                        <%= pro?.status %>
+                                                                    </a>
+                                                                    <% } %>
+                                                        </td>
+
+
+                                                        <td class="text-center">
+                                                            <ul class="list-inline me-auto mb-0">
+
+                                                                <li class="list-inline-item align-bottom"
+                                                                    data-bs-toggle="tooltip" title="Edit">
+                                                                    <a href="#" data-bs-toggle="modal"
+                                                                        data-bs-target="#exampleModal<%= pro.id %>"
+                                                                        class="avtar avtar-xs btn-link-success btn-pc-default">
+                                                                        <i class="ti ti-edit-circle f-18"></i></a>
+                                                                </li>
+
+                                                                <li class="list-inline-item align-bottom"
+                                                                    data-bs-toggle="tooltip" title="Delete">
+                                                                    <a href="/product/deleteproduct?id=<%= pro.id %>"
+                                                                        class="avtar avtar-xs btn-link-danger btn-pc-default">
+                                                                        <i class="ti ti-trash f-18"></i></a>
+                                                                </li>
+                                                            </ul>
+
+                                                        </td>
+                                                    </tr>
+                                                    <%})%>
+
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                </div>
+                <!-- [ sample-page ] end -->
+            </div>
+            <!-- [ Main Content ] end -->
+
+
+
+            <!-- Edit Page -->
+
+
+
+
+            <!-- Modal -->
+            <% product.map((single)=>{ %>
+                <div class="modal fade" id="exampleModal<%= single.id %>" tabindex="-1"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-lg-12">
+
+                                        <% if(locals?.message?.success){ %>
+                                            <div class="alert alert-success" role="alert">
+                                                <strong>Success!</strong>
+                                                <%= locals.message.success %>
+                                            </div>
+                                            <% } %>
+                                                <!-- [ form-element ] start -->
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <form action="/product/updateproduct" method="post"
+                                                            enctype="multipart/form-data">
+                                                            <input type="hidden" name="editid"
+                                                                value="<%= single?.id %>">
+                                                            <div class="form-group row my-3">
+                                                                <label
+                                                                    class="col-form-label text-lg-start">Category</label>
+                                                                <div>
+                                                                    <div class="typeahead">
+                                                                        <select name="category" id="category"
+                                                                            class="form-control"
+                                                                            onchange="categoryRecord() ">
+                                                                            <option value="">-- Select Category
+                                                                                --</option>
+                                                                            <% category.map((val)=>{ %>
+                                                                                <% if(val?.category==single?.categoryId?.category){
+                                                                                    %>
+                                                                                    <option value="<%= val?.id %>"
+                                                                                        selected>
+                                                                                        <%= val.category %>
+                                                                                    </option>
+
+                                                                                    <% }else{%>
+                                                                                        <option value="<%= val?.id %>">
+                                                                                            <%= val.category %>
+                                                                                        </option>
+                                                                                        <% } %>
+
+                                                                                            <% }) %>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row my-3">
+                                                                <label class="col-form-label text-lg-start">Sub
+                                                                    Category</label>
+                                                                <div>
+                                                                    <div class="typeahead">
+                                                                        <select name="subcategory" id="subcategory"
+                                                                            onchange="subcategoryRecord()"
+                                                                            class="form-control">
+                                                                            <option value="">-- Select Subcategory --
+                                                                            </option>
+
+                                                                            <% subcategory.map((val)=> { %>
+                                                                                <% if
+                                                                                    (val?.subcategory==single?.subcategoryId?.subcategory)
+                                                                                    { %>
+                                                                                    <option value="<%= val?.id %>"
+                                                                                        selected>
+                                                                                        <%= val.subcategory %>
+                                                                                    </option>
+                                                                                    <% } %>
+                                                                                        <% }) %>
+
+
+
+
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row my-3">
+                                                                <label
+                                                                    class="col-form-label text-lg-start">ExSubCategory</label>
+                                                                <div>
+                                                                    <div class="typeahead">
+                                                                        <select name="exsubcategory" id="exsubcategory"
+                                                                            class="form-control">
+
+                                                                            <% exsubcategory.map((val)=> { %>
+                                                                                <% if
+                                                                                    (val?.exsubcategory==single?.exsubcategoryId.exsubcategory)
+                                                                                    { %>
+                                                                                    <option value="<%= val?.id %>"
+                                                                                        selected>
+                                                                                        <%= val.exsubcategory %>
+                                                                                    </option>
+                                                                                    <% } %>
+                                                                                        <% }) %>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+
+                                                            <div class="form-group row mb-3">
+                                                                <label
+                                                                    class="col-form-label text-lg-start">Product</label>
+                                                                <div>
+                                                                    <div class="typeahead">
+                                                                        <input class="form-control" name="product"
+                                                                            type="text" value="<%= single?.product %>"
+                                                                            placeholder="product">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row mb-3">
+                                                                <label
+                                                                    class="col-form-label text-lg-start">Price</label>
+                                                                <div>
+                                                                    <div class="typeahead">
+                                                                        <input class="form-control" name="price"
+                                                                            type="number" value="<%= single?.price %>"
+                                                                            placeholder="Price">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row mb-3">
+                                                                <label
+                                                                    class="col-form-label text-lg-start">Description</label>
+                                                                <div>
+                                                                    <div class="typeahead">
+                                                                        <input class="form-control" name="description"
+                                                                            type="text"
+                                                                            value="<%= single?.description %>"
+                                                                            placeholder="Description">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row mb-3">
+                                                                <label
+                                                                    class="col-form-label text-lg-start">Image</label>
+                                                                <div>
+                                                                    <div class="typeahead">
+                                                                        <input class="form-control" name="image"
+                                                                            type="file">
+                                                                        <img src="<%=single?.image%>" width="100">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row mb-3">
+                                                                <label
+                                                                    class="col-form-label text-lg-start">Status</label>
+                                                                <div>
+                                                                    <select class="form-select" name="status">
+                                                                        <option value="active">Active</option>
+                                                                        <option value="inactive">Inactive</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+
+                                                            <div class="text-end p-4 pb-sm-2">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Close</button>
+                                                                <button type="submit"
+                                                                    class="btn btn-primary d-inline-flex align-item-center">
+                                                                    Submit</button>
+                                                                </button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <%})%>
+
+
+        </div>
+    </section>
+    <!-- [ Main Content ] end -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        const categoryRecord = () => {
+            let categoryId = document.getElementById('category').value;
+
+            $.ajax({
+                type: 'GET',
+                url: `/exsubcategory/ajaxcategorywiserecord?categoryId=${categoryId}`,
+                success: function (res) {
+                    let subcategories = res.subcategory; // Corrected variable name
+                    let options = `<option value="" disabled selected>-- Select SubCategory --</option>`;
+
+                    subcategories.forEach((subcategory) => {
+                        options += `<option value="${subcategory?._id}">${subcategory?.subcategory}</option>`;
+                    });
+
+                    document.getElementById('subcategory').innerHTML = options;
+                },
+                error: function (err) {
+                    console.error("Error fetching subcategories:", err);
+                }
+            });
+        };
+
+        const subcategoryRecord = () => {
+            let subcategoryid = document.getElementById('subcategory').value;
+            $.ajax({
+                type: "GET",
+                url: `/product/ajaxcategorywiserecord?subcategoryId=${subcategoryid}`,
+                success: function (res) {
+                    let exsubcategory = res.exsubcategory;
+                    console.log(exsubcategory);
+
+                    let tbl = "";
+                    tbl += `<option value="">Select an exsubcategory</option>`
+                    exsubcategory.map((cat, index) => {
+                        tbl += `<option value='${cat?._id}'>${cat?.exsubcategory}</option>`
+                    })
+                    document.getElementById('exsubcategory').innerHTML = tbl
+
+                }
+            })
+
+        }
+
+    </script>
+
+
+    <script>
+        function searchTable() {
+
+            let input = document.getElementById("searchInput");
+            let filter = input.value.toLowerCase();
+
+            let table = document.getElementById("pc-dt-simple");
+            let tr = table.getElementsByTagName("tr");
+
+
+            for (let i = 1; i < tr.length; i++) {
+                let td = tr[i].getElementsByTagName("td")[1];
+                if (td) {
+                    let txtValue = td.textContent || td.innerText;
+                    if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+
+
+    <%- include('../footer')%>

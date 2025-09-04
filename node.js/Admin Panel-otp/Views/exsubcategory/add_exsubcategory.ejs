@@ -1,0 +1,505 @@
+<%- include('../header')%>
+    <!-- [ Main Content ] start -->
+    <section class="pc-container">
+        <div class="pc-content">
+            <!-- [ breadcrumb ] start -->
+            <div class="page-header">
+                <div class="page-block">
+                    <div class="row align-items-center">
+                        <div class="col-md-12">
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="../dashboard/index.html">Home</a></li>
+                                <li class="breadcrumb-item"><a href="javascript: void(0)">Forms</a></li>
+                                <li class="breadcrumb-item" aria-current="page">TypeAhead</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4 d-flex">
+                            <div class="page-header-title">
+                                <h2 class="mb-0">Exsub Category</h2>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <form class="header-search">
+                                <input type="search" class="form-control" id="searchInput"
+                                    placeholder="Search here. . ." onkeyup="searchTable()">
+                            </form>
+                        </div>
+                        <div class="col-md-4 d-flex justify-content-end">
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#staticBackdrop">
+                                Add
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- [ breadcrumb ] end -->
+
+
+
+
+
+
+            <!-- [ Main Content ] start -->
+            <div class="row">
+
+
+
+                <div class="col-lg-12">
+
+                    <% if(locals?.message?.success){ %>
+                        <div class="alert alert-success" role="alert">
+                            <strong>Success!</strong>
+                            <%= locals.message.success %>
+                        </div>
+                        <% } %>
+                            <!-- [ form-element ] start -->
+
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static"
+                                data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="staticBackdropLabel">Exsub Category</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <form action="/exsubcategory/insertexsubcategory" method="post">
+
+                                                        <div class="form-group row my-3">
+                                                            <label class="col-form-label text-lg-start">Category</label>
+                                                            <div>
+                                                                <div class="typeahead">
+                                                                    <select name="category" id="category"
+                                                                        class="form-control"
+                                                                        onchange="categoryRecord()">
+                                                                        <option value="">-- Select Category --</option>
+                                                                        <% category.map((cat,index)=>{%>
+                                                                            <option value="<%= cat?.id%>">
+                                                                                <%=cat?.category%>
+                                                                            </option>
+                                                                            <%}) %>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row my-3">
+                                                            <label class="col-form-label text-lg-start">Sub
+                                                                Category</label>
+                                                            <div>
+                                                                <div class="typeahead">
+                                                                    <select name="subcategory" id="subcategory"
+                                                                        class="form-control">
+                                                                        <option>-- Select SubCategory --</option>
+                                                                        
+ 
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="form-group row mb-3">
+                                                            <label
+                                                                class="col-form-label  text-lg-start">ExSubCategory</label>
+                                                            <div>
+                                                                <div class="typeahead">
+                                                                    <input class="form-control" name="exsubcategory"
+                                                                        type="text" placeholder="SubCategory">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="text-end p-4 pb-sm-2">
+
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Close</button>
+                                                            <button type="submit"
+                                                                class="btn btn-primary d-inline-flex align-item-center">Submit</button>
+
+                                                        </div>
+
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                </div>
+            </div>
+            <!-- [ Main Content ] end -->
+
+            <!-- [ Main Content ] start -->
+            <div class="row">
+                <!-- [ sample-page ] start -->
+                <div class="col-sm-12">
+
+                    <% if(locals?.message?.delete){%>
+                        <div class="alert alert-danger" role="alert">
+                            <%= locals.message.delete %>
+                        </div>
+                        <%}%>
+
+                            <div class="card table-card">
+
+                                <div class="card-body">
+
+                                    <div class="table-responsive">
+                                        <table class="table table-hover" id="pc-dt-simple">
+                                            <thead>
+                                                <tr>
+                                                    <th>Id</th>
+                                                    <th>Category Name</th>
+                                                    <th>Sub Category</th>
+                                                    <th>Exsub Category</th>
+                                                    <th>Status</th>
+                                                    <th class="text-center">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                <% exsubcategory.map((exsubcat,index)=>{ %>
+                                                    <tr>
+                                                        <td>
+                                                            <%= ++index %>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="mb-0">
+                                                                <%= exsubcat?.categoryId?.category %>
+                                                            </h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="mb-0">
+                                                                <%= exsubcat?.subcategoryId?.subcategory %>
+                                                            </h6>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="mb-0">
+                                                                <%= exsubcat?.exsubcategory %>
+                                                            </h6>
+                                                        </td>
+
+                                                        <td>
+                                                            <% if (exsubcat?.status==="active" ) { %>
+                                                                <a href="#" class="badge bg-light-success f-12">
+
+                                                                    <%= exsubcat?.status %>
+                                                                </a>
+                                                                <% } else { %>
+                                                                    <a href="#" class="badge bg-light-danger f-12">
+                                                                        <%= exsubcat?.status %>
+                                                                    </a>
+                                                                    <% } %>
+                                                        </td>
+
+
+
+                                                        <td class="text-center">
+                                                            <ul class="list-inline me-auto mb-0">
+
+                                                                <li class="list-inline-item align-bottom"
+                                                                    data-bs-toggle="tooltip" title="Edit">
+                                                                    <a href="#" data-bs-toggle="modal"
+                                                                        data-bs-target="#exampleModal<%= exsubcat.id %>"
+                                                                        class="avtar avtar-xs btn-link-success btn-pc-default">
+                                                                        <i class="ti ti-edit-circle f-18"></i></a>
+                                                                </li>
+
+                                                                <li class="list-inline-item align-bottom"
+                                                                    data-bs-toggle="tooltip" title="Delete">
+                                                                    <a href="#" data-bs-toggle="modal"
+                                                                        data-bs-target="#staticBackdrop<%= exsubcat.id %>"
+                                                                        class="avtar avtar-xs btn-link-danger btn-pc-default">
+                                                                        <i class="ti ti-trash f-18"></i></a>
+                                                                </li>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                    <%})%>
+
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                </div>
+                <!-- [ sample-page ] end -->
+            </div>
+            <!-- [ Main Content ] end -->
+
+
+            <!-- Edit Page -->
+
+            <!-- Modal -->
+
+
+            <% exsubcategory.map((single)=>{ %>
+                <div class="modal fade" id="exampleModal<%= single.id %>" tabindex="-1"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel"> Edit ExSub Category</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Modal -->
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+
+                                        <% if(locals?.message?.success){ %>
+                                            <div class="alert alert-success" role="alert">
+                                                <strong>Success!</strong>
+                                                <%= locals.message.success %>
+                                            </div>
+                                            <% } %>
+                                                <!-- [ form-element ] start -->
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <form action="/exsubcategory/updateexsubcategory" method="post">
+                                                            <input type="hidden" name="editid"
+                                                                value="<%= single?.id %>">
+                                                            <div class="form-group row my-3">
+                                                                <label
+                                                                    class="col-form-label  text-lg-start">Category</label>
+                                                                <div>
+                                                                    <div class="typeahead">
+                                                                        <select name="category" id="category"
+                                                                            class="form-control"
+                                                                            onchange="cateRecord() ">
+                                                                            <option value="">-- Select
+                                                                                Category
+                                                                                --</option>
+                                                                            <% category.map((val)=>{ %>
+                                                                                <% if(val?.category==single?.categoryId?.category){
+                                                                                    %>
+                                                                                    <option value="<%= val?.id %>"
+                                                                                        selected>
+                                                                                        <%= val.category %>
+                                                                                    </option>
+
+                                                                                    <% }else{%>
+                                                                                        <option value="<%= val?.id %>">
+                                                                                            <%= val.category %>
+                                                                                        </option>
+                                                                                        <% } %>
+
+                                                                                            <% }) %>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row my-3">
+                                                                <label
+                                                                    class="col-form-label  text-lg-start">Subcategory</label>
+                                                                <div>
+                                                                    <div class="typeahead">
+                                                                        <select name="subcategory" id="subcategory"
+                                                                            class="form-control">
+                                                                            <option value="">-- Select
+                                                                                Subcategory --
+                                                                            </option>
+
+                                                                            <% subcategory.map((val)=> {
+                                                                                %>
+                                                                                <% if
+                                                                                    (val?.subcategory==single?.subcategoryId?.subcategory)
+                                                                                    { %>
+                                                                                    <option value="<%= val?.id %>"
+                                                                                        selected>
+                                                                                        <%= val.subcategory %>
+                                                                                    </option>
+                                                                                    <% } %>
+                                                                                        <% }) %>
+
+
+
+
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+
+
+                                                            <div class="form-group row mb-3">
+                                                                <label class="col-form-label  text-lg-start">Edit
+                                                                    ExsubCategory</label>
+                                                                <div>
+                                                                    <div class="typeahead">
+                                                                        <input class="form-control" name="exsubcategory"
+                                                                            type="text"
+                                                                            value="<%= single?.exsubcategory %>"
+                                                                            placeholder="Exsubcategory">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row mb-3">
+                                                                <label
+                                                                    class="col-form-label text-lg-start">Status</label>
+                                                                <div>
+                                                                    <select class="form-select" name="status">
+                                                                        <option value="active">Active</option>
+                                                                        <option value="inactive">Inactive</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+
+                                                            <div class="text-end p-4 pb-sm-2">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Close</button>
+                                                                <button type="submit"
+                                                                    class="btn btn-primary d-inline-flex align-item-center">
+                                                                    Ubdate</button>
+                                                                </button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                </div>
+                <%})%>
+
+
+                    <!-- Delete Page -->
+
+
+                    <% exsubcategory.map((exsubcat)=>{ %>
+                        <div class="modal fade" id="staticBackdrop<%= exsubcat.id %>" data-bs-backdrop="static"
+                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="staticBackdropLabel">Delete Category</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Are you sure you want to delete category?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Cancel</button>
+                                        <a href="/exsubcategory/deleteexsubcategory?id=<%= exsubcat.id %>"
+                                            class="btn btn-danger">Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <%})%>
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+    </section>
+    <!-- [ Main Content ] end -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        const categoryRecord = () => {
+            let categoryId = document.getElementById('category').value;
+
+            $.ajax({
+                type: 'GET',
+                url: `/exsubcategory/ajaxcategorywiserecord?categoryId=${categoryId}`,
+                success: function (res) {
+                    let subcategories = res.subcategory; // Corrected variable name
+                    let options = `<option value="" disabled selected>-- Select SubCategory --</option>`;
+
+                    subcategories.forEach((subcategory) => {
+                        options += `<option value="${subcategory?._id}">${subcategory?.subcategory}</option>`;
+                    });
+
+                    document.getElementById('subcategory').innerHTML = options;
+                },
+                error: function (err) {
+                    console.error("Error fetching subcategories:", err);
+                }
+            });
+        };
+    </script>
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+        const cateRecord = () => {
+            let categoryid = document.getElementById('category').value
+
+            $.ajax({
+                type: 'GET',
+                url: `/exsubcategory/ajaxcategorywiserecord?categoryId=${categoryid}`,
+
+
+                success: function (res) {
+                    let subcategory = res.subcategory
+                    let tbl = `<option value="" disable selected>Select a subcategory</option>`
+                    subcategory.map((val) => {
+
+                        tbl += `<option value="${val._id}" ${val?._id === "<%= single?.subcategoryId?._id %>" ? 'selected' : ''}>${val?.subcategory}</option>`
+                    })
+                    document.getElementById('subcategory').innerHTML = tbl
+                }
+            })
+        }
+    </script>
+
+
+    <script>
+        function searchTable() {
+
+            let input = document.getElementById("searchInput");
+            let filter = input.value.toLowerCase();
+
+            let table = document.getElementById("pc-dt-simple");
+            let tr = table.getElementsByTagName("tr");
+
+
+            for (let i = 1; i < tr.length; i++) {
+                let td = tr[i].getElementsByTagName("td")[1];
+                if (td) {
+                    let txtValue = td.textContent || td.innerText;
+                    if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+
+    <%- include('../footer')%>
