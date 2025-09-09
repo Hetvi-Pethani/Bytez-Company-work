@@ -475,7 +475,13 @@ const importCustItems = async (req, res) => {
                             deleted_at: null
                         });
 
-                        if (!customer || !customerBill || !stock) {
+                        const product = await Stock.findOne({
+                            registerId,
+                            productId: row.productName,
+                            deleted_at: null
+                        })
+
+                        if (!customer || !customerBill || !stock || !product) {
                             console.warn(`Skipping row due to missing reference:`, row);
                             skipped++;
                             continue;
@@ -486,6 +492,10 @@ const importCustItems = async (req, res) => {
                             customerId: customer._id,
                             customerBillId: customerBill._id,
                             stockId: stock._id,
+                            productId: stock.productName,
+                            rate: Number(row.rate) || 0,
+                            amount: Number(row.amount) || 0,
+                            qty: Number(row.qty) || 0,
                             deleted_at: null
                         };
 
@@ -506,6 +516,8 @@ const importCustItems = async (req, res) => {
                                 customerId: customer._id,
                                 customerBillId: customerBill._id,
                                 stockId: stock._id,
+                                productId: stock.productId,
+
                             });
                             inserted++;
                         }
@@ -539,7 +551,9 @@ const exportCustItems = async (req, res) => {
         })
             .populate('customerId', 'customers')
             .populate('customerBillId', 'billNo')
-            .populate('stockId', ' stock');
+            .populate('stockId', ' stock')
+            .populate('productId', ' product');
+
 
         res.setHeader('Content-Disposition', 'attachment; filename=customer_bill_items.csv');
         res.setHeader('Content-Type', 'text/csv');
@@ -553,6 +567,9 @@ const exportCustItems = async (req, res) => {
                 customer: item.customerId?.customers || '',
                 billNo: item.customerBillId?.billNo || '',
                 stock: item.stockId?.stock || '',
+                rate: item.rate || 0,
+                amount: item.amount || 0,
+                productId:item.productId?.product || '',
                 qty: item.qty || 0,
                 status: item.status || 'inactive'
             });

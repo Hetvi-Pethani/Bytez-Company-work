@@ -1,0 +1,7 @@
+_id,customer,billNo,stock,rate,amount,productId,qty,status
+68bab17be146165ff8f35a1b,yashvi,23,10,1000,1000,Denim,1,active
+68bab1d7e146165ff8f35a45,disha,900,20,4000,16000,titan,4,active
+68bab1d7e146165ff8f35a46,disha,900,20,3000,6000,Nike,2,active
+68bab3edac50bfe6c30abc59,sss,2022,20,4000,16000,titan,4,active
+68bab3edac50bfe6c30abc5a,sss,2022,10,1000,1000,Denim,1,active
+68bfac12de8d98c25c300381,siya,197,10,1000,1000,Denim,1,active

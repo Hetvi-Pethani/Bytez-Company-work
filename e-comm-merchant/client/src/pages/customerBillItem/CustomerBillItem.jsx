@@ -13,8 +13,8 @@ const CustomerBillItem = () => {
 
     const navigate = useNavigate();
 
-    const [qty, setQty] = useState('');
-    const [rate, setRate] = useState("");
+    // const [qty, setQty] = useState('');
+    // const [rate, setRate] = useState("");
     const [customerId, setCustomerId] = useState('');
     const [customerBillId, setCustomerBillId] = useState('');
     const [stockId, setStockId] = useState('');

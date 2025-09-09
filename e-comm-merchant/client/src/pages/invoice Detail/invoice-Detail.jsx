@@ -79,9 +79,10 @@ const InvoicePrint = () => {
                                             <h6 className="form-label" >INVOICE NO:</h6>
                                             <input
                                                 type="text"
-                                                placeholder="Bill No"
+                                                placeholder="Invoice No"
                                                 className="form-control  bg-light border-0"
                                                 value={billDetails?.billNo || ''}
+                                                
                                                 readOnly
                                             />
                                         </div>

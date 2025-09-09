@@ -10,7 +10,6 @@ app.set('view engine', 'ejs');
 
 const db = require('./db');
 
-
 const cors = require('cors');
 app.use(cors({
     origin: 'http://localhost:5173',

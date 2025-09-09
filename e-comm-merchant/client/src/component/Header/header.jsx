@@ -98,8 +98,8 @@ const Header = () => {
                                 </a>
                                 {isProductOpen && (
                                     <ul>
-                                        {/* <li className="pc-item"><a className="pc-link" href="/customers">Customers</a></li>
-                                        <li className="pc-item"><a className="pc-link" href="/customersbill">CustomersBill</a></li> */}
+                                         {/* <li className="pc-item"><a className="pc-link" href="/customers">Customers</a></li> */}
+                                        {/* <li className="pc-item"><a className="pc-link" href="/customersbill">CustomersBill</a></li>  */}
                                         <li className="pc-item"><a className="pc-link" href="/customersbillitem">CustomersBillItem</a></li>
                                         <li className="pc-item"><a className="pc-link" href="/invoice">Invoice</a></li>
                                         <li className="pc-item"><a className="pc-link" href="/invoiceprint">Invoice-Print</a></li>

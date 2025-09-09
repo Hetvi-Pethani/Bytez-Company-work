@@ -154,7 +154,7 @@ const getInvoicePrintData = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Error fetching invoice print data:", error);
+    console.error("Error fetching invoice print data");
     return res.status(500).json({ message: "Server Error" });
   }
 };

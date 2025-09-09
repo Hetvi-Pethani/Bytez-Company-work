@@ -213,87 +213,6 @@ const getcustBillitems = async (req, res) => {
     }
 };
 
-// const insertCustomerBillItem = async (req, res) => {
-//     try {
-//         const { customerBillId, customerId, stockId, productId, status } = req.body;
-
-//         const registerId = req.user.id;
-
-//         const newItem = new CustomerBillItem({
-//             registerId,
-//             customerBillId,
-//             customerId,
-//             productId,
-//             stockId,
-//             status
-//         });
-
-//         const result = await newItem.save();
-
-//         return res.status(200).json({
-//             message: 'Customer bill item inserted successfully',
-//             data: result
-//         });
-
-//     } catch (err) {
-//         console.error("Insert error:", err.message);
-//         return res.status(500).json({ message: 'Server error', error: err.message });
-//     }
-// };
-
-// const getcustBillitems = async (req, res) => {
-//     try {
-//         const items = await CustomerBillItem.find()
-//             .populate("customerId")
-//             .populate("productId");
-//         res.json({ success: true, data: items });
-//     } catch (err) {
-//         res.status(500).json({ success: false, message: "Server error" });
-//     }
-// };
-
-// const insertCustomerBillItem = async (req, res) => {
-//     try {
-//         const registerId = req.user.id;
-//         let { customerBillId, customerId, productList, stockId, productId, qty, rate, amount, status } = req.body;
-
-
-//         productList = [{
-//             stockId,
-//             productId,
-//             qty,
-//             rate,
-//             amount
-//         }];
-
-//         const itemsPayload = productList
-//             .filter(p => p.stockId && p.productId)
-//             .map(p => ({
-//                 registerId,
-//                 customerBillId,
-//                 customerId,
-//                 stockId: p.stockId,
-//                 productId: p.productId,
-//                 qty: Number(p.qty) || 0,
-//                 rate: Number(p.rate) || 0,
-//                 amount: Number(p.amount || ((p.qty) * (p.rate || 0))),
-//                 status: status || "active",
-//             }));
-
-
-//         const result = await CustomerBillItem.insertMany(itemsPayload);
-
-//         return res.status(200).json({
-//             success: true,
-//             message: "Customer bill items inserted successfully",
-//             data: result
-//         });
-
-//     } catch (err) {
-//         console.error("Insert error:", err);
-//         return res.status(500).json({ message: "Server error", error: err.message });
-//     }
-// };
 
 const insertCustomerBillItem = async (req, res) => {
     try {
@@ -314,7 +233,10 @@ const insertCustomerBillItem = async (req, res) => {
         }));
         const result = await CustomerBillItem.insertMany(itemsPayload);
 
-        return res.status(200).json({ success: true, message: "Customer bill items inserted successfully", data: result });
+        return res.status(200).json({
+             success: true,
+              message: "Customer bill items inserted successfully"
+            });
 
     } catch (error) {
         console.error("Insert error:", error);
