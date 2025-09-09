@@ -15,7 +15,6 @@ const CustomerBillItem = () => {
 
     const [qty, setQty] = useState('');
     const [rate, setRate] = useState("");
-
     const [customerId, setCustomerId] = useState('');
     const [customerBillId, setCustomerBillId] = useState('');
     const [stockId, setStockId] = useState('');
@@ -39,8 +38,6 @@ const CustomerBillItem = () => {
     const handleCloseEdit = () => setShowEditModal(false);
     const handleShowEdit = () => setShowEditModal(true);
     const [showModal, setShowModal] = useState(false);
-
-
 
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
@@ -192,78 +189,80 @@ const CustomerBillItem = () => {
     ]);
 
     const handlePrint = (billitems) => {
-        navigate('/invoiceprint', { state: { billitemsData:billitems} });
+        navigate('/invoiceprint', { state: { billitemsData: billitems } });
     };
 
 
-    const insertcustomerbillitem = async (e) => {
-        e.preventDefault();
+    // const insertcustomerbillitem = async (e) => {
+    //     e.preventDefault();
 
-        const customerbillitemExists = itemsData.some(
-            item => item.customerId === customerId
-        );
+    //     const customerbillitemExists = itemsData.some(
+    //         item => item.customerId === customerId
+    //     );
 
-        if (customerbillitemExists) {
-            handleShowAdd();
-            toast.error("Customer Bill Item already exists for this customer");
-            return;
-        }
+    //     if (customerbillitemExists) {
+    //         handleShowAdd();
+    //         toast.error("Customer Bill Item already exists for this customer");
+    //         return;
+    //     }
 
-        const payload = {
-            customerBillId,
-            customerId,
-            productList: productList.map(item => ({
-                stockId,
-                productId,
-                qty: (item.qty || 1),
-                rate: Number(item.rate),
-                amount: Number(item.amount) || (item.qty * item.rate),
-            }))
-        };
+    //     const payload = {
+    //         customerBillId,
+    //         customerId,
+    //         productList: productList.map(item => ({
+    //             stockId,
+    //             productId,
+    //             qty: (item.qty || 1),
+    //             rate: Number(item.rate),
+    //             amount: Number(item.amount) || (item.qty * item.rate),
+    //         }))
+    //     };
 
 
-        try {
-            const response = await authFetch("http://localhost:8000/customerbillitem/insertcustomerbillitem", {
-                method: 'POST',
-                body: JSON.stringify(payload)
-            });
+    //     try {
+    //         const response = await authFetch("http://localhost:8000/customerbillitem/insertcustomerbillitem", {
+    //             method: 'POST',
+    //             body: JSON.stringify(payload)
+    //         });
 
-            const data = await response.json();
+    //         const data = await response.json();
 
-            if (response.ok) {
-                toast.success("Item inserted successfully");
-                setCustomerId("");
-                setStockId("");
-                setCustomerBillId("");
-                setProductList([]);
-                fetchCustomerBills();
-                fetchItems();
-                handleCloseAdd();
-            } else {
-                toast.error(data.message || "Failed to insert item");
-            }
-        } catch (error) {
-            console.error("Error inserting item:", error);
-            toast.error("Error inserting item");
-        }
-    };
+    //         if (response.ok) {
+    //             toast.success("Item inserted successfully");
+    //             setCustomerId("");
+    //             setStockId("");
+    //             setCustomerBillId("");
+    //             setProductList([]);
+    //             fetchCustomerBills();
+    //             fetchItems();
+    //             handleCloseAdd();
+    //         } else {
+    //             toast.error(data.message || "Failed to insert item");
+    //         }
+    //     } catch (error) {
+    //         console.error("Error inserting item:", error);
+    //         toast.error("Error inserting item");
+    //     }
+    // };
 
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this item?")) {
             return;
         }
-        const response = await authFetch("http://localhost:8000/customerBillItem/deletecustomerbillitem", {
+        const response = await authFetch("http://localhost:8000/customerbillitem/deletecustomerbillitem", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id })
         });
         const data = await response.json();
-        console.log(data);
 
         if (response.ok) {
-            toast.success("customers Deleted Successfully");
+            toast.success("customerBillItems Deleted Successfully");
             fetchItems();
+
+        } else {
+            toast.error(data.message || "Failed to delete customerBillItems");
         }
 
     };
@@ -289,17 +288,30 @@ const CustomerBillItem = () => {
             return;
         }
 
+        // const updatedData = {
+        //     editId,
+        //     customerId,
+        //     customerBillId,
+        //     stockId,
+        //     productId,
+        //     qty,
+        //     rate,
+        //     amount: qty * rate,
+        //     status
+        // };
+
         const updatedData = {
-            editId,
-            customerId,
             customerBillId,
-            stockId,
-            productId,
-            qty,
-            rate,
-            amount: qty * rate,
-            status
+            customerId,
+            productList: productList.map(item => ({
+                stockId,
+                productId,
+                qty: (item.qty || 1),
+                rate: Number(item.rate),
+                amount: Number(item.amount) || (item.qty * item.rate),
+            }))
         };
+
 
         try {
             const response = await authFetch("http://localhost:8000/customerbillitem/updatecustomerbillitem", {
@@ -391,7 +403,6 @@ const CustomerBillItem = () => {
         <>
             <Header />
             <div className="pc-container p-3" style={{ top: "65px" }}>
-
                 <div className="page-block">
                     <div className="row align-items-center">
                         <div className="col-md-4 d-flex ">
@@ -402,16 +413,13 @@ const CustomerBillItem = () => {
                     </div>
                 </div>
 
-
                 {/* View  CustomersBillItem */}
                 <div className="row">
                     <div className="col-sm-12">
                         <div className="card">
                             <div className="card-header pb-0 p-3" >
-                                <div className="d-flex justify-content-between">
-                                    <Button variant="primary" style={{ fontWeight: "bold" }} onClick={handleShowAdd}>
-                                        <i className="ti ti-plus" style={{ fontSize: "13px" }}></i> Add CustomerBillItem
-                                    </Button>
+                                <div className="d-flex justify-content-end">
+
                                     <div className="d-flex gap-1 ">
                                         <Button style={{ backgroundColor: "#f1f5f9", border: "0", color: "#000" }} onClick={handleExport}>
                                             <i className="ti ti-download"></i> Export
@@ -473,11 +481,11 @@ const CustomerBillItem = () => {
                                             <th>Customer</th>
                                             <th>Customer Bill</th>
                                             <th>Product Details</th>
-                                            <th> Amount</th>
-                                            <th>Qty</th>
                                             <th>rate</th>
+                                            <th>Qty</th>
+                                            <th>Amount</th>
                                             <th>Status</th>
-                                            <th>Action</th>
+                                            {/* <th>Action</th> */}
                                         </tr>
                                     </thead>
                                     <tbody >
@@ -485,27 +493,44 @@ const CustomerBillItem = () => {
                                             currentItems.map((item, index) => (
                                                 <tr key={item._id}
                                                     onClick={() => handlePrint(item._id)}
-
                                                 >
                                                     <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                                                     <td>{item.customer}</td>
                                                     <td> {item.billNo}</td>
-                                                    <td>{item.productName}</td>
-                                                    <td> {item.amount}</td>
-                                                    <td>{item.qty}</td>
-                                                    <td> {item.rate}</td>
+                                                    <td>
+                                                        {item.items.map((p, i) => (
+                                                            <div key={i}>{p.productName}</div>
+                                                        ))}
+                                                    </td>
+                                                    <td>
+                                                        {item.items.map((p, i) => (
+                                                            <div key={i}>{p.rate}</div>
+                                                        ))}
+                                                    </td>
+                                                    <td>
+                                                        {item.items.map((p, i) => (
+                                                            <div key={i}>{p.qty}</div>
+                                                        ))}
+                                                    </td>
+                                                    <td>
+                                                        {item.items.map((p, i) => (
+                                                            <div key={i}>{p.amount}</div>
+                                                        ))}
+                                                    </td>
+
+
                                                     <td>
                                                         <button className="btn btn-primary btn-sm" style={{ backgroundColor: item.status === "active" ? "#eef9e8" : "#ffeded", color: item.status === "active" ? "#52c41a" : "#ff4d4f", border: 0, borderRadius: 5 }}>
                                                             {item.status}
                                                         </button>
                                                     </td>
-                                                    <td>
+                                                    {/* <td>
                                                         <button className="btn  btn-sm" data-bs-toggle="modal" data-bs-target="#editModal" style={{ color: "#94a3b8", border: 0 }} onClick={() => handleEdit(item._id)} ><FaRegEdit onClick={handleShowEdit} />
                                                         </button>
                                                         &nbsp; &nbsp;
                                                         <button className="btn  btn-sm" onClick={() => handleDelete(item._id)} style={{ color: "#94a3b8", border: 0 }}><RiDeleteBin6Line />
                                                         </button>
-                                                    </td>
+                                                    </td> */}
                                                 </tr>
                                             ))
                                         }
@@ -556,7 +581,7 @@ const CustomerBillItem = () => {
 
 
                     {/* Add  customerbill item */}
-                    <Modal show={showAddModal} onHide={handleCloseAdd} backdrop="static" keyboard={false} centered>
+                    {/* <Modal show={showAddModal} onHide={handleCloseAdd} backdrop="static" keyboard={false} centered>
                         <Modal.Header closeButton>
                             <Modal.Title>Add CustomerBill Item</Modal.Title>
                         </Modal.Header>
@@ -616,7 +641,7 @@ const CustomerBillItem = () => {
                                         </div>
                                     </div>
 
-                                    {/* <div className="form-group row mb-2">
+                                    <div className="form-group row mb-2">
                                         <label className="col-form-label">amount</label>
                                         <div>
                                             <select className="form-control" value={stockId} onChange={(e) => setStockId(e.target.value)} required>
@@ -667,7 +692,7 @@ const CustomerBillItem = () => {
                                                     ))}
                                             </select>
                                         </div>
-                                    </div> */}
+                                    </div>
 
 
                                     <div className="text-end p-3 pb-md-3">
@@ -683,7 +708,7 @@ const CustomerBillItem = () => {
                             </div>
 
                         </Modal.Body>
-                    </Modal>
+                    </Modal> */}
 
 
 

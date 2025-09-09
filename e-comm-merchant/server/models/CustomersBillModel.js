@@ -43,10 +43,7 @@ const customerBillSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    finalTotal: {
-        type: Number,
-        required: true
-    },
+   
     status: {
         type: String,
         default: 'active'

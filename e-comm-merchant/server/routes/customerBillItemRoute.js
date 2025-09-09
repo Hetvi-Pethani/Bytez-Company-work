@@ -1,7 +1,7 @@
 const express = require('express');
 
 
-const { insertCustomerBillItem, deleteCustomerBillItem, updateCustomerBillItem, changeStatus, getcustomers, getCustomerBills, getstocks, getcustBillitems, importCustItems, exportCustItems } = require('../controller/CustomerBillItemController');
+const {  deleteCustomerBillItem, updateCustomerBillItem, changeStatus, getcustomers, getCustomerBills, getstocks, getcustBillitems, importCustItems, exportCustItems } = require('../controller/CustomerBillItemController');
 const { verifyToken } = require('../middleware/Auth');
 
 
@@ -24,7 +24,6 @@ const st = multer.diskStorage({
 const uploadCSV = multer({ storage: st }).single('file');
 
 
-routes.post('/insertcustomerbillitem', verifyToken, insertCustomerBillItem);
 routes.post('/deletecustomerbillitem', verifyToken, deleteCustomerBillItem);
 routes.post('/updatecustomerbillitem', verifyToken, updateCustomerBillItem);
 routes.get('/getcustbillitems', verifyToken, getcustBillitems);

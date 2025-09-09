@@ -26,7 +26,7 @@ const CustomerBill = () => {
 
     const [cgst, setCgst] = useState("");
     const [sgst, setSgst] = useState("");
-    const [discount, setDiscount] = useState("1");
+    const [discount, setDiscount] = useState("");
     const [discountAmount, setDiscountAmount] = useState("");
     const [discountType, setDiscountType] = useState("");
 
@@ -205,10 +205,11 @@ const CustomerBill = () => {
                     body: JSON.stringify({ id })
                 });
                 const data = await response.json();
-                console.log(data)
+
                 if (response.ok) {
-                    toast.success("Customer Bill Deleted Successfully");
+                    toast.success("CustomerBill Deleted Successfully");
                     fetchCustomerBills();
+
                 } else {
                     toast.error("Failed to delete customer bill");
                 }
@@ -348,6 +349,9 @@ const CustomerBill = () => {
     };
 
 
+    const handlePrint = (bill) => {
+        navigate('/invoiceprint', { state: { billData: bill } });
+    };
 
 
     return (
@@ -371,10 +375,7 @@ const CustomerBill = () => {
                     <div className="col-sm-12">
                         <div className="card">
                             <div className="card-header pb-0 p-3" >
-                                <div className="d-flex justify-content-between">
-                                    <Button variant="primary" style={{ fontWeight: "bold" }} onClick={handleShowAdd}>
-                                        {/* <i className="ti ti-plus" style={{ fontSize: "13px" }}></i> Add CustomerBill */}
-                                    </Button>
+                                <div className="d-flex justify-content-end  ">
 
                                     <div className="d-flex gap-1 ">
                                         <Button style={{ backgroundColor: "#f1f5f9", border: "0", color: "#000" }} onClick={handleExport}>
@@ -414,35 +415,7 @@ const CustomerBill = () => {
                                             <input type="search" className="form-control" id="searchInput" placeholder="Search here. . ." onChange={(e) => setSearch(e.target.value)} value={search} />
                                         </form>
                                     </div>
-                                    {/* <div>
-                                            <div
-                                                className="dataTables_length"
-                                                id="dom-table_length"
-                                                style={{ display: 'inline-block', verticalAlign: 'middle' }}
-                                            >
-                                                <label className="form-label mb-0 me-2" style={{ display: 'inline-block' }}>
-                                                    Show
-                                                </label>
-                                                <select
-                                                    name="dom-table_length"
-                                                    aria-controls="dom-table"
-                                                    className="form-select form-select-sm d-inline-block"
-                                                    style={{ width: 'auto', display: 'inline-block' }}
-                                                    value={itemsPerPage}
-                                                    onChange={(e) => {
-                                                        setItemsPerPage(Number(e.target.value));
-                                                        setCurrentPage(1);
-                                                    }}
-                                                >
-                                                    <option value="5">5</option>
-                                                    <option value="10">10</option>
-                                                    <option value="25">25</option>
-                                                    <option value="50">50</option>
-                                                    <option value="100">100</option>
-                                                </select>
-                                                <span className="ms-2">entries</span>
-                                            </div>
-                                        </div> */}
+
                                     <div className="col-md-2">
                                         <select
                                             id="status"
@@ -472,7 +445,6 @@ const CustomerBill = () => {
                                             <th>Grand Total</th>
                                             <th>Discount</th>
                                             <th>Discount Type</th>
-                                            <th>Final Total</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -480,7 +452,9 @@ const CustomerBill = () => {
                                     <tbody >
                                         {
                                             currentItems.map((item, index) => (
-                                                <tr key={item._id}>
+                                                <tr key={item._id}
+                                                // onClick={() => handlePrint(item._id)}
+                                                >
                                                     <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                                                     <td>{item.billNo}</td>
                                                     <td>{item.billTotal}</td>
@@ -490,7 +464,7 @@ const CustomerBill = () => {
                                                     <td>{item.grandTotal}</td>
                                                     <td>{item.discount === 1 ? `${item.discountAmount}%` : `₹${item.discountAmount}`}</td>
                                                     <td>{item.discount === 1 ? "Percentage (%)" : "Fixed (₹)"}</td>
-                                                    <td>{item.finalTotal}</td>
+
                                                     <td>
                                                         <button className="btn btn-primary btn-sm" style={{ backgroundColor: item.status === "active" ? "#eef9e8" : "#ffeded", color: item.status === "active" ? "#52c41a" : "#ff4d4f", border: 0, borderRadius: 5 }}>
                                                             {item.status}

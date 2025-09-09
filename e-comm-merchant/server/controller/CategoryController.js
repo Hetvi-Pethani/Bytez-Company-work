@@ -19,24 +19,6 @@ const viewCategory = async (req, res) => {
     }
 }
 
-// const getcategories = async (req, res) => {
-//     try {
-//         const registerId = req.user.id;
-//         const categories = await Category.aggregate([
-//             {
-//                 $match: {
-//                     registerId: new mongoose.Types.ObjectId(registerId),
-//                     deleted_at: null
-//                 }
-//             }
-//         ]);
-//         return res.status(200).json(categories);
-//     }
-//     catch (err) {
-//         console.log(err);
-//         return res.status(400).json({ message: 'invelid  request' });
-//     }
-// }
 
 const getcategories = async (req, res) => {
     try {

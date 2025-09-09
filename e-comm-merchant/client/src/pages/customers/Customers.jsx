@@ -52,9 +52,7 @@ const Customers = () => {
 
 
 
-    // const handleRowClick = (id) => {
-    //     navigate(`/invoiceprint/${id}`);
-    // };
+    
 
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
@@ -82,23 +80,7 @@ const Customers = () => {
     }, [search]);
 
 
-    // const fetchCustomers = async () => {
-    //     try {
-    //         const response = await authFetch('http://localhost:8000/customers/getcustomers', {
-    //             method: 'GET',
-    //         });
-
-    //         const data = await response.json();
-
-    //         if (response.ok) {
-    //             setCustomersData(data);
-    //         }
-    //     } catch (error) {
-    //         console.error('Error fetching customers:', error);
-    //     }
-    // };
-
-
+   
     const fetchCustomers = async (searchTerm = '') => {
         try {
             const response = await authFetch(`http://localhost:8000/customers/getcustomers?search=${encodeURIComponent(searchTerm)}`, {
@@ -115,55 +97,7 @@ const Customers = () => {
         }
     };
 
-    const insertCustomers = async (e) => {
-        e.preventDefault();
-
-        const trimmedCustomers = customers.trim().toLowerCase();
-        const customersExists = customersData.some(
-            item => item.customers?.trim().toLowerCase() === trimmedCustomers && !item.deleted_at
-        );
-        if (customersExists) {
-            handleShowAdd();
-            toast.error("Customer already exists");
-            return;
-        }
-
-        try {
-            const searchKeywords = customers.split(/\s+/).join(',');
-            const formData = new FormData();
-            formData.append('customers', customers);
-            formData.append('email', email);
-            formData.append('contact', contact);
-            formData.append('location', location);
-            formData.append('searchKeywords', searchKeywords);
-
-            const response = await fetch('http://localhost:8000/customers/insertcustomers', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('token'),
-                }
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                toast.success("customers Added Successfully");
-                setCustomers("");
-                setContact("");
-                setEmail("");
-                setLocation("");
-                setSearchKeywords('');
-                handleCloseAdd();
-                fetchCustomers();
-            } else {
-                toast.error("customers Not Added");
-            }
-
-        } catch (error) {
-            console.error('Error adding customers:', error);
-            toast.error("Error adding customers");
-        }
-    }
+   
 
     const handleEdit = (id) => {
         const customersToEdit = customersData.find(item => item._id === id);
@@ -325,10 +259,8 @@ const Customers = () => {
                     <div className="col-sm-12">
                         <div className="card">
                             <div className="card-header pb-0 p-3">
-                                <div className="d-flex justify-content-between">
-                                    <Button variant="primary" style={{ fontWeight: "bold" }} onClick={handleShowAdd}>
-                                        {/* <i className="ti ti-plus" style={{ fontSize: "13px" }}></i> Add Customer */}
-                                    </Button>
+                                <div className="d-flex justify-content-end">
+                                   
                                     <div className="d-flex gap-2">
                                         <Button style={{ backgroundColor: "#f1f5f9", border: "0", color: "#000" }} onClick={handleExport}>
                                             <i className="ti ti-download"></i> Export
@@ -366,35 +298,7 @@ const Customers = () => {
                                             <input type="search" className="form-control" id="searchInput" placeholder="Search here. . ." onChange={(e) => setSearch(e.target.value)} value={search} />
                                         </form>
                                     </div>
-                                    {/* <div>
-                                        <div
-                                            className="dataTables_length"
-                                            id="dom-table_length"
-                                            style={{ display: 'inline-block', verticalAlign: 'middle' }}
-                                        >
-                                            <label className="form-label mb-0 me-2" style={{ display: 'inline-block' }}>
-                                                Show
-                                            </label>
-                                            <select
-                                                name="dom-table_length"
-                                                aria-controls="dom-table"
-                                                className="form-select form-select-sm d-inline-block"
-                                                style={{ width: 'auto', display: 'inline-block' }}
-                                                value={itemsPerPage}
-                                                onChange={(e) => {
-                                                    setItemsPerPage(Number(e.target.value));
-                                                    setCurrentPage(1);
-                                                }}
-                                            >
-                                                <option value="5">5</option>
-                                                <option value="10">10</option>
-                                                <option value="25">25</option>
-                                                <option value="50">50</option>
-                                                <option value="100">100</option>
-                                            </select>
-                                            <span className="ms-2">entries</span>
-                                        </div>
-                                    </div> */}
+                                    
                                     <div className="col-md-2">
                                         <select
                                             id="status"
@@ -428,8 +332,7 @@ const Customers = () => {
                                             currentItems.map((item, index) => (
 
                                                 <tr key={item._id}
-                                                // onClick={() => handleRowClick(item._id)}
-                                                // style={{ cursor: "pointer" }}
+                                               
                                                 >
 
                                                     <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
@@ -503,71 +406,7 @@ const Customers = () => {
                     </div>
 
 
-                    {/* Add customers */}
-                    {/* <Modal show={showAddModal} onHide={handleCloseAdd} backdrop="static" keyboard={false} centered>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Add customers</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <div className="card-body">
-                                <form onSubmit={insertCustomers}>
-                                    <div className="form-group row mb-0">
-                                        <label className="col-form-label text-lg-start">Add customers</label>
-                                        <div>
-                                            <div className="typeahead">
-                                                <input className="form-control" name="customers" type="text" placeholder="Add customers" onChange={(e) => setCustomers(e.target.value)} value={customers} required />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="form-group row mb-0">
-                                        <label className="col-form-label text-lg-start">Email</label>
-                                        <div>
-                                            <div className="typeahead">
-                                                <input className="form-control" name="email" type="email" placeholder="Add Email" onChange={(e) => setEmail(e.target.value)} value={email} required />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="form-group row mb-0">
-                                        <label className="col-form-label text-lg-start">Contact</label>
-                                        <div>
-                                            <div className="typeahead">
-                                                <input className="form-control" name="contact" type="mobile" minLength={10} maxLength={10} pattern="[0-9]{10}" placeholder="Add Contact" onChange={(e) => setContact(e.target.value)} value={contact} required />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="form-group row mb-0">
-                                        <label className="col-form-label text-lg-start">Location</label>
-                                        <div>
-                                            <div className="typeahead">
-                                                <input className="form-control" name="location" type="location" placeholder="Add Location" onChange={(e) => setLocation(e.target.value)} value={location} required />
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <div className="form-group row mb-3">
-                                        <label className="col-form-label  text-lg-start">Image</label>
-                                        <div>
-                                            <div className="typeahead">
-                                                <input className="form-control" name="image" type="file" placeholder="Image" onChange={(e) => setImage(e.target.files[0])} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="text-end p-3 pb-md-3">
-                                        <Button variant="secondary" onClick={handleCloseAdd}>
-                                            Close
-                                        </Button>
-                                        &nbsp;
-                                        <Button type='submit' variant="primary">
-                                            Submit
-                                        </Button>
-                                    </div>
-                                </form>
-                            </div>
-
-                        </Modal.Body>
-                    </Modal> */}
+                  
 
                     {/* Edit customers */}
                     <Modal show={showEditModal} onHide={handleCloseEdit} backdrop="static" keyboard={false} centered>

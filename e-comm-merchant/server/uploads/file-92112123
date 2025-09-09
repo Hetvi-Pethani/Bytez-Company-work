@@ -1,0 +1,7 @@
+_id,customer,billNo,productId,amount,rate,stock,qty,status
+68ba74788f028aab5c53baf7,bansi,12,,2000,1000,10,2,active
+68ba74788f028aab5c53baf8,bansi,12,,4000,4000,20,1,active
+68ba74e0d97d829569b70167,jiya,200,,3000,3000,20,1,active
+68ba79fcc92bc4180825f762,hd,800,,3000,3000,20,1,active
+68ba7bc2987439958e0caa93,h,687,,2000,1000,10,2,active
+68ba7e2ca24b65cfbdfa21c6,bansi,12,,8000,4000,20,2,active

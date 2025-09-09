@@ -61,9 +61,6 @@ const customerBillItemSchema = new mongoose.Schema({
     amount: { type: Number, required: true },
 
 
-
-
-
 }, { timestamps: true });
 
 const CustomerBillItem = mongoose.model('customerbillitems', customerBillItemSchema);

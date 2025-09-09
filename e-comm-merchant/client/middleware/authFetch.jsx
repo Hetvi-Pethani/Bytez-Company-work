@@ -23,7 +23,5 @@ export const authFetch = async (url, options = {}) => {
 
     return null;
   }
-
-
   return response;
 };

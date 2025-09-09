@@ -85,38 +85,38 @@ const getCustomers = async (req, res) => {
     }
 };
 
-const insertCustomers = async (req, res) => {
+// const insertCustomers = async (req, res) => {
 
-    try {
+//     try {
 
-        const { customers, contact, location, email } = req.body;
-        const registerId = req.user.id;
+//         const { customers, contact, location, email } = req.body;
+//         const registerId = req.user.id;
 
-        const keywordString = customers
-            .trim()
-            .toLowerCase()
-            .split(/\s+/)
-            .filter(k => k)
-            .join('');
+//         const keywordString = customers
+//             .trim()
+//             .toLowerCase()
+//             .split(/\s+/)
+//             .filter(k => k)
+//             .join('');
 
-        const customersData = new Customers({
-            registerId,
-            customers: customers,
-            email: email,
-            contact: contact,
-            location: location,
-            searchKeywords: keywordString,
-        })
+//         const customersData = new Customers({
+//             registerId,
+//             customers: customers,
+//             email: email,
+//             contact: contact,
+//             location: location,
+//             searchKeywords: keywordString,
+//         })
 
-        await customersData.save();
-        return res.status(200).json({ message: 'customers added successfully' });
+//         await customersData.save();
+//         return res.status(200).json({ message: 'customers added successfully' });
 
-    }
-    catch (err) {
-        console.log(err);
-        return res.status(400).json({ message: 'invelid request' });
-    }
-}
+//     }
+//     catch (err) {
+//         console.log(err);
+//         return res.status(400).json({ message: 'invelid request' });
+//     }
+// }
 
 const deletecustomers = async (req, res) => {
     try {
@@ -341,7 +341,7 @@ const exportsCustomers = async (req, res) => {
 
 
 module.exports = {
-    viewCustomers, getCustomers, insertCustomers, deletecustomers, editcustomers, updatecustomers, changeStatus, importCustomers, exportsCustomers
+    viewCustomers, getCustomers,  deletecustomers, editcustomers, updatecustomers, changeStatus, importCustomers, exportsCustomers
 }
 
 

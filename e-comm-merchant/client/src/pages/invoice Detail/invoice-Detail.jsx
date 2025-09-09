@@ -8,6 +8,7 @@ const InvoicePrint = () => {
     const location = useLocation();
     const billitemsData = location.state?.billitemsData;
     const billData = location.state?.billData;
+
     const [invoice, setInvoice] = useState([]);
 
     const fetchInvoice = async () => {
@@ -19,7 +20,7 @@ const InvoicePrint = () => {
                 },
                 body: JSON.stringify({
                     customerBillItemId: billitemsData,
-                    customerBillId: billData
+                    customerbillId: billData,
                 }),
             })
 
@@ -37,7 +38,7 @@ const InvoicePrint = () => {
 
     if (!invoice) return <div>Loading or no data found...</div>;
 
-    const { customer, productList, billDetails } = invoice;
+    const { customer, billDetails } = invoice;
 
     const formatCurrency = (amount = 0) => `₹${parseFloat(amount).toFixed(2)}`;
     const formatDate = (date) => date?.split("T")[0] || "";
@@ -48,7 +49,7 @@ const InvoicePrint = () => {
             <div className="pc-container p-3" style={{ top: "65px" }}>
                 <div className="row align-items-center">
                     <div className="page-header-title">
-                        <h3 className="mb-3">Invoice</h3>
+                        <h3 className="mb-3">Invoice Print</h3>
                     </div>
                 </div>
 
@@ -63,31 +64,36 @@ const InvoicePrint = () => {
                                 </div>
 
                                 <div className="col-lg-4 text-end">
-                                    <p>Company: <span>Bytez Tech</span></p>
-                                    <p>Contact: <span>90336 47654</span></p>
-                                    <p>Address: <span>607,608 Rio Business Hub</span></p>
+                                    <div>
+                                        <p className="text-start">Company: <span>Bytez Tech</span></p>
+                                        <p className="text-start">Contact: <span>90336 47654</span></p>
+                                        <p className="text-start">Address: <span>607,608 Rio Business Hub</span></p>
+                                    </div>
                                 </div>
                             </div>
 
                             <div className="card-body p-4 border-top border-top-dashed">
-                                <div className="d-flex justify-content-end gap-1">
-                                    <div>
-                                        <h6 className="form-label">Invoice Number:</h6>
-                                        <input
-                                            type="text"
-                                            className="form-control bg-light border-0"
-                                            value={billDetails?.billNo || ''}
-                                            readOnly
-                                        />
-                                    </div>
-                                    <div>
-                                        <h6 className="form-label">Invoice Date:</h6>
-                                        <input
-                                            type="date"
-                                            className="form-control bg-light border-0"
-                                            value={formatDate(billDetails?.date)}
-                                            readOnly
-                                        />
+                                <div className="card-body">
+                                    <div className="d-flex justify-content-end gap-1">
+                                        <div>
+                                            <h6 className="form-label" >INVOICE NO:</h6>
+                                            <input
+                                                type="text"
+                                                placeholder="Bill No"
+                                                className="form-control  bg-light border-0"
+                                                value={billDetails?.billNo || ''}
+                                                readOnly
+                                            />
+                                        </div>
+                                        <div>
+                                            <h6 className="form-label">INVOICE DATE:</h6>
+                                            <input
+                                                type="date"
+                                                className="form-control bg-light border-0"
+                                                value={formatDate(billDetails?.date)}
+                                                readOnly
+                                            />
+                                        </div>
                                     </div>
                                 </div>
 
@@ -101,6 +107,7 @@ const InvoicePrint = () => {
                                             value={customer?.customers || ''}
                                             readOnly
                                         />
+                                     
                                         <input
                                             type="email"
                                             className="form-control bg-light border-0 mb-2"
@@ -129,7 +136,6 @@ const InvoicePrint = () => {
                                 </div>
 
                                 <hr />
-
                                 <table className="table table-borderless table-nowrap">
                                     <thead style={{ backgroundColor: "#f0f0f0ff" }}>
                                         <tr>
@@ -137,39 +143,34 @@ const InvoicePrint = () => {
                                             <th>Product Details</th>
                                             <th>Rate (₹)</th>
                                             <th>Quantity</th>
-                                            <th className="text-end">Amount</th>
+                                            <th >Amount</th>
                                             <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {productList && (
-                                            <tr>
-                                                {/* Index */}
-                                                <td className="border px-2">1</td>
-
-                                                {/* Product Name */}
+                                        {invoice.productList?.map((p, index) => (
+                                            <tr key={index}>
+                                                <td>{index + 1}</td>
                                                 <td>
                                                     <input
                                                         type="text"
                                                         className="form-control bg-light border-0"
                                                         placeholder="Product Name"
-                                                        value={productList?.productId || ""}
+                                                        value={p?.productName || ""}
                                                         readOnly
                                                     />
                                                 </td>
 
-                                                {/* Rate */}
                                                 <td className="border px-2">
                                                     <input
                                                         type="number"
                                                         className="form-control bg-light border-0"
                                                         placeholder="0.00"
-                                                        value={productList.rate || 0}
+                                                        value={p.rate || 0}
                                                         readOnly
                                                     />
                                                 </td>
 
-                                                {/* Quantity */}
                                                 <td>
                                                     <div
                                                         className="input-step d-flex align-items-center"
@@ -197,9 +198,9 @@ const InvoicePrint = () => {
                                                                 border: "none",
                                                                 fontSize: "14px",
                                                             }}
-                                                            value={productList.qty || 0}
-                                                            readOnly
+                                                            value={p.qty || 0}
 
+                                                            readOnly
                                                         />
 
                                                         <button
@@ -212,13 +213,12 @@ const InvoicePrint = () => {
                                                     </div>
                                                 </td>
 
-                                                {/* Amount */}
-                                                <td className="border px-2 text-right">
+                                                <td className="border text-right">
                                                     <input
                                                         type="text"
-                                                        className="form-control bg-light border-0 text-end"
+                                                        className="form-control bg-light border-0"
                                                         style={{ width: "100px" }}
-                                                        value={`₹${(productList.amount || 0).toFixed(2)}`}
+                                                        value={`₹${(p.amount || 0).toFixed(2)}`}
                                                         readOnly
                                                     />
                                                 </td>
@@ -226,63 +226,57 @@ const InvoicePrint = () => {
 
 
                                             </tr>
-                                        )}
+                                        ))}
                                     </tbody>
 
-                                    <tfoot>
-                                        <tr className="border-top border-top-dashed">
+                                    {/* <tbody>
+                                        {invoice.productList?.map((p, index) => (
+                                            <tr key={index}>
+                                                <td>{index + 1}</td>
+                                                <td>{p.productName}</td>
+                                                <td>{p.rate}</td>
+                                                <td>{p.qty}</td>
+                                                <td>{p.amount}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody> */}
+
+                                    <tfoot >
+                                        <tr className="border-top ">
                                             <td colSpan={3} />
-                                            <td colSpan={3} className="p-0">
+                                            <td colSpan={4} className="p-4">
                                                 <table className="table table-borderless table-sm mb-0">
                                                     <tbody>
                                                         <tr>
                                                             <th>Bill Total</th>
+
                                                             <td>
-                                                                <input
-                                                                    className="form-control bg-light border-0"
-                                                                    value={formatCurrency(billDetails?.billTotal)}
-                                                                    readOnly
-                                                                />
+                                                                {formatCurrency(billDetails?.billTotal)}
+
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <th>Discount</th>
                                                             <td>
-                                                                <input
-                                                                    className="form-control bg-light border-0"
-                                                                    value={formatCurrency(billDetails?.discount)}
-                                                                    readOnly
-                                                                />
+                                                                {formatCurrency(billDetails?.discount)}
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <th>CGST</th>
                                                             <td>
-                                                                <input
-                                                                    className="form-control bg-light border-0"
-                                                                    value={formatCurrency(billDetails?.cgst)}
-                                                                    readOnly
-                                                                />
+                                                                {formatCurrency(billDetails?.cgst)}
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <th>SGST</th>
                                                             <td>
-                                                                <input
-                                                                    className="form-control bg-light border-0"
-                                                                    value={formatCurrency(billDetails?.sgst)}
-                                                                    readOnly
-                                                                />
+                                                                {formatCurrency(billDetails?.sgst)}
                                                             </td>
                                                         </tr>
-                                                        <tr className="border-top border-top-dashed">
+                                                        <tr className="border-top">
                                                             <th>Grand Total</th>
-                                                            <td>
-                                                                <input
-                                                                    className="form-control"
-                                                                    value={formatCurrency(billDetails?.grandTotal)}
-                                                                    readOnly
-                                                                />
+                                                            <td className="fs-6 fw-semibold">
+                                                                {formatCurrency(billDetails?.grandTotal)}
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -298,18 +292,17 @@ const InvoicePrint = () => {
                                         className="form-control alert alert-info"
                                         rows={2}
                                         defaultValue={"All accounts are to be paid within 7 days..."}
-                                        readOnly
+
                                     />
                                 </div>
 
                                 <div className="hstack gap-2 justify-content-end d-print-none mt-4">
-                                    <button onClick={() => window.print()} className="btn btn-success">
+                                    
+                                    <button  className="btn btn-success">
                                         <i className="ri-printer-line" /> Print
                                     </button>
-                                    <a href="#" className="btn btn-primary">
-                                        <i className="ri-download-2-line" /> Download Invoice
-                                    </a>
                                     <button className="btn btn-primary">Save Invoice</button>
+                                    
                                 </div>
                             </div>
                         </div>

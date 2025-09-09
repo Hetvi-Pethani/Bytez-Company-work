@@ -89,7 +89,7 @@ const getInvoices = async (req, res) => {
 
         const invoices = await Invoice.find({
             registerId,
-            
+
         }).populate('customerId')
             .populate('customerBillId')
             .populate('registerId')
@@ -99,6 +99,7 @@ const getInvoices = async (req, res) => {
         console.error('Error fetching invoices:', error);
     }
 }
+
 const getcustBillitems = async (req, res) => {
     try {
         const registerId = req.user.id;
@@ -153,29 +154,45 @@ const getcustBillitems = async (req, res) => {
                     $match: {
                         $or: [
                             { "customer.customers": { $regex: search, $options: "i" } },
-                            { "bill.customerbills": { $regex: search, $options: "i" } },
-                            { "product.products": { $regex: search, $options: "i" } }
+                            { "bill.billNo": { $regex: search, $options: "i" } },
+                            { "product.product": { $regex: search, $options: "i" } }
                         ]
                     }
                 }]
                 : []),
 
             {
+                $group: {
+                    _id: "$customerBillId",
+                    registerId: { $first: "$registerId" },
+                    customerId: { $first: "$customerId" },
+                    customer: { $first: "$customer.customers" },
+                    billNo: { $first: "$bill.billNo" },
+                    status: { $first: "$status" },
+                    items: {
+                        $push: {
+                            stockId: "$stock._id",
+                            productId: "$product._id",
+                            productName: "$product.product",
+                            qty: "$qty",
+                            rate: "$rate",
+                            amount: "$amount"
+                        }
+                    },
+                    totalAmount: { $sum: "$amount" }
+                }
+            },
+
+            {
                 $project: {
                     id: "$_id",
                     registerId: 1,
-                    customerBillId: 1,
                     customerId: 1,
-                    stockId: "$stock._id",
-                    productId: "$product._id",
-                    qty: { $multiply: ["$qty", "$stock.qty"] },
-                    rate: { $multiply: ["$qty", "$stock.rate"] },
+                    customer: 1,
+                    billNo: 1,
                     status: 1,
-                    customer: "$customer.customers",
-                    billNo: "$bill.billNo",
-                    productName: "$product.product",
-                    amount: { $multiply: ["$qty", "$stock.amount"] },
-
+                    items: 1,
+                    totalAmount: 1
                 }
             }
         ]);
@@ -278,7 +295,6 @@ const getcustBillitems = async (req, res) => {
 //     }
 // };
 
-
 const insertCustomerBillItem = async (req, res) => {
     try {
         const { customerBillId, customerId, productList, } = req.body;
@@ -296,8 +312,6 @@ const insertCustomerBillItem = async (req, res) => {
             amount: (item.amount) || ((item.qty) * (item.rate)),
 
         }));
-
-
         const result = await CustomerBillItem.insertMany(itemsPayload);
 
         return res.status(200).json({ success: true, message: "Customer bill items inserted successfully", data: result });
@@ -356,7 +370,6 @@ const getCustomerBills = async (req, res) => {
                     discount: 1,
                     discountAmount: 1,
                     discountType: 1,
-                    finalTotal: 1,
                     created_at: 1,
                     customer: {
                         id: '$customerData._id',
@@ -406,9 +419,7 @@ const insertCustomerBill = async (req, res) => {
             discount,
             discountAmount,
             discountType,
-            finalTotal
         } = req.body;
-
 
         const customerbill = CustomerBill({
             registerId,
@@ -422,7 +433,6 @@ const insertCustomerBill = async (req, res) => {
             discount,
             discountAmount,
             discountType,
-            finalTotal,
         });
 
         const savedCustomerBill = await customerbill.save();
@@ -437,6 +447,7 @@ const insertCustomerBill = async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 };
+
 
 
 

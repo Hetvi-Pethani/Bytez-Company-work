@@ -186,7 +186,6 @@ const getCustomerBills = async (req, res) => {
                     discount: 1,
                     discountAmount: 1,
                     discountType: 1,
-                    finalTotal: 1,
                     created_at: 1,
                     customer: {
                         id: '$customerData._id',
@@ -283,27 +282,42 @@ const getcustBillitems = async (req, res) => {
                 }]
                 : []),
 
+            // Group by CustomerBillId
+            {
+                $group: {
+                    _id: "$customerBillId",
+                    registerId: { $first: "$registerId" },
+                    customerId: { $first: "$customerId" },
+                    customer: { $first: "$customer.customers" },
+                    billNo: { $first: "$bill.billNo" },
+                    status: { $first: "$status" },
+                    items: {
+                        $push: {
+                            stockId: "$stock._id",
+                            productId: "$product._id",
+                            productName: "$product.product",
+                            qty: "$qty",
+                            rate: "$rate",
+                            amount: "$amount"
+                        }
+                    },
+                    totalAmount: { $sum: "$amount" }
+                }
+            },
+
             {
                 $project: {
                     id: "$_id",
                     registerId: 1,
-                    customerBillId: 1,
                     customerId: 1,
-                    stockId: "$stock._id",
-                    productId: "$product._id",
-                    qty: 1,
-                    rate: 1,
+                    customer: 1,
+                    billNo: 1,
                     status: 1,
-                    customer: "$customer.customers",
-                    billNo: "$bill.billNo",
-                    productName: "$product.product",
-                    amount: 1,
-
+                    items: 1,
+                    totalAmount: 1
                 }
-
             }
         ]);
-
 
         res.status(200).json({
             success: true,
@@ -322,79 +336,17 @@ const getcustBillitems = async (req, res) => {
 };
 
 
-
-
-
-// const insertCustomerBillItem = async (req, res) => {
-//     try {
-//         const { customerBillId, customerId, stockId, productId, status } = req.body;
-
-//         const registerId = req.user.id;
-
-//         const newItem = CustomerBillItem({
-//             registerId,
-//             customerBillId,
-//             customerId,
-//             productId,
-//             stockId,
-//             status
-//         });
-
-//         const result = await newItem.save();
-
-//         return res.status(200).json({
-//             message: 'Customer bill item inserted successfully',
-//             data: result
-//         });
-
-//     } catch (err) {
-//         console.error("Insert error:", err.message);
-//         return res.status(500).json({ message: 'Server error', error: err.message });
-//     }
-// };
-
-
-
-const insertCustomerBillItem = async (req, res) => {
-    try {
-        const { customerBillId, customerId, productList, status } = req.body;
-        const registerId = req.user.id;
-
-
-        const itemsPayload = productList.map(item => ({
-            registerId,
-            customerBillId,
-            customerId,
-            stockId: item.stockId,
-            productId: item.productId,
-            qty: (item.qty) || 0,
-            rate: (item.rate) || 0,
-            amount: (item.amount) || ((item.qty) * (item.rate)),
-            status
-        }));
-
-
-        const result = await CustomerBillItem.insertMany(itemsPayload);
-
-        console.log("Inserted Customer Bill Items:", result);
-
-        return res.status(200).json({ success: true, message: "Customer bill items inserted successfully", data: result });
-
-    } catch (error) {
-        console.error("Insert error:", error);
-        res.status(500).json({ success: false, message: "Server error" });
-    }
-};
-
-
-
-
 const deleteCustomerBillItem = async (req, res) => {
     try {
         const { id } = req.body;
-        const result = await CustomerBillItem.findByIdAndUpdate(id,
-
-            { deleted_at: new Date() },
+        const result = await CustomerBillItem.findByIdAndUpdate(
+            id,
+            {
+                $set: {
+                    deleted: true,
+                    deleted_at: new Date()
+                }
+            },
             { new: true }
         );
 
@@ -409,25 +361,36 @@ const deleteCustomerBillItem = async (req, res) => {
 
 const updateCustomerBillItem = async (req, res) => {
     try {
-        const { editId, customerBillId, customerId, stockId, productId, qty, rate, amount, status } = req.body;
+        const { editId, customerBillId, customerId, productList, status } = req.body;
         const registerId = req.user.id;
 
-        const updateData = {
+        // const updateData = {
+        //     registerId,
+        //     customerBillId,
+        //     customerId,
+        //     stockId,
+        //     productId,
+        //     qty: Number(qty) || 0,
+        //     rate: Number(rate) || 0,
+        //     amount: Number(amount) || (Number(qty) * Number(rate)),
+        //     status
+        // };
+        const updateData = productList.map(item => ({
             registerId,
             customerBillId,
             customerId,
-            stockId,
-            productId,
-            qty: Number(qty) || 0,
-            rate: Number(rate) || 0,
-            amount: Number(amount) || (Number(qty) * Number(rate)),
+            stockId: item.stockId,
+            productId: item.productId,
+            qty: (item.qty) || 0,
+            rate: (item.rate) || 0,
+            amount: (item.amount) || ((item.qty) * (item.rate)),
             status
-        };
+        }));
+
 
         const updated = await CustomerBillItem.findOneAndUpdate(
             { _id: editId, registerId },
             updateData,
-            { new: true }
         );
 
         if (!updated) {
@@ -548,7 +511,7 @@ const importCustItems = async (req, res) => {
                         }
                     }
 
-                    fs.unlinkSync(filePath); // Clean up uploaded file
+                    fs.unlinkSync(filePath);
                     res.status(200).json({
                         message: 'Customer bill items imported successfully.',
                         inserted,
@@ -565,7 +528,6 @@ const importCustItems = async (req, res) => {
         res.status(500).json({ message: 'Failed to import customer bill items' });
     }
 };
-
 
 const exportCustItems = async (req, res) => {
     try {
@@ -604,7 +566,7 @@ const exportCustItems = async (req, res) => {
 };
 
 module.exports = {
-    insertCustomerBillItem,
+    // insertCustomerBillItem,
     getcustBillitems,
     deleteCustomerBillItem,
     updateCustomerBillItem,

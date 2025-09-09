@@ -2,7 +2,7 @@ const express = require('express');
 
 const { verifyToken } = require('../middleware/Auth');
 
-const { viewCustomers, getCustomers, insertCustomers, changeStatus, deletecustomers, updatecustomers, editcustomers, importCustomers, exportsCustomers } = require('../controller/CustomersController');
+const { viewCustomers, getCustomers,  changeStatus, deletecustomers, updatecustomers, editcustomers, importCustomers, exportsCustomers } = require('../controller/CustomersController');
 
 const multer = require('multer');
 
@@ -25,7 +25,7 @@ const uploadCSV = multer({ storage: st }).single('file');
 
 routes.get('/', verifyToken, viewCustomers)
 routes.get('/getcustomers', verifyToken, getCustomers)
-routes.post('/insertcustomers', verifyToken,  insertCustomers)
+// routes.post('/insertcustomers', verifyToken,  insertCustomers)
 routes.post('/changestatus', changeStatus)
 routes.post('/deletecustomers', deletecustomers)
 routes.post('/updatecustomers', verifyToken, updatecustomers)

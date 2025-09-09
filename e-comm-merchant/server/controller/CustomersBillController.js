@@ -54,7 +54,6 @@ const getCustomerBills = async (req, res) => {
                     discount: 1,
                     discountAmount: 1,
                     discountType: 1,
-                    finalTotal: 1,
                     created_at: 1,
                     customer: {
                         id: '$customerData._id',
@@ -142,7 +141,6 @@ const insertCustomerBill = async (req, res) => {
             grandTotal,
             discount,
             discountAmount,
-            finalTotal
         } = req.body;
 
         const registerId = req.user.id;
@@ -158,7 +156,6 @@ const insertCustomerBill = async (req, res) => {
             grandTotal,
             discount,
             discountAmount,
-            finalTotal,
             searchKeywords: `${billNo} ${customerId} ${registerId}`.toLowerCase().replace(/\s+/g, " ")
         });
 
@@ -195,7 +192,6 @@ const updateCustomerBill = async (req, res) => {
             discount,
             discountAmount,
             discountType,
-            finalTotal
         } = req.body;
 
         const registerId = req.user.id;
@@ -216,7 +212,7 @@ const updateCustomerBill = async (req, res) => {
                 discount,
                 discountAmount,
                 discountType,
-                finalTotal
+                
             }
         })
 

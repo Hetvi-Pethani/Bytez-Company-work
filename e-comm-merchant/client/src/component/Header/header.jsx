@@ -98,11 +98,13 @@ const Header = () => {
                                 </a>
                                 {isProductOpen && (
                                     <ul>
-                                        <li className="pc-item"><a className="pc-link" href="/customers">Customers</a></li>
-                                        <li className="pc-item"><a className="pc-link" href="/customersbill">CustomersBill</a></li>
+                                        {/* <li className="pc-item"><a className="pc-link" href="/customers">Customers</a></li>
+                                        <li className="pc-item"><a className="pc-link" href="/customersbill">CustomersBill</a></li> */}
                                         <li className="pc-item"><a className="pc-link" href="/customersbillitem">CustomersBillItem</a></li>
+                                        <li className="pc-item"><a className="pc-link" href="/invoice">Invoice</a></li>
+                                        <li className="pc-item"><a className="pc-link" href="/invoiceprint">Invoice-Print</a></li>
                                     </ul>
-                                )}
+                                )}  
                             </li>
 
                             <li className="pc-item">
@@ -170,18 +172,7 @@ const Header = () => {
                                     <span className="pc-mtext">Merchant Form</span>
                                 </a>
                             </li>
-                            <li className="pc-item">
-                                <a href="/invoice" className="pc-link">
-                                    <span className="pc-micon"><i className="ti ti-user-plus"></i></span>
-                                    <span className="pc-mtext">Invoice</span>
-                                </a>
-                            </li>
-                            <li className="pc-item">
-                                <a href="/invoiceprint" className="pc-link">
-                                    <span className="pc-micon"><i className="ti ti-user-plus"></i></span>
-                                    <span className="pc-mtext">Invoice Print</span>
-                                </a>
-                            </li>
+                            
                         </ul>
                     </div>
                 </div>

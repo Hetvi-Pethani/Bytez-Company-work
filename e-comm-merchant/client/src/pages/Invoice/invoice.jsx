@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import Header from "../../component/Header/header";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { authFetch } from "../../../middleware/authfetch";
-import Button from 'react-bootstrap/Button';
 import { toast } from 'react-toastify'
 
 
@@ -126,9 +125,9 @@ const Invoice = () => {
     const [billTotal, setBillTotal] = useState("");
     const [grandTotal, setGrandTotal] = useState("");
     const [finalTotal, setFinalTotal] = useState("");
-    const [cgst, setCgst] = useState("");
-    const [sgst, setSgst] = useState("");
-    const [discount, setDiscount] = useState("1");
+    const [cgst, setCgst] = useState(9);
+    const [sgst, setSgst] = useState(9);
+    const [discount, setDiscount] = useState(1);
     const [discountAmount, setDiscountAmount] = useState("");
     const [discountType, setDiscountType] = useState("");
     const [bills, setBills] = useState([]);
@@ -342,7 +341,7 @@ const Invoice = () => {
 
             const invoiceData = {
                 customerId,
-                
+
                 billNo,
                 billDate: new Date(),
                 billTotal: parseFloat(billTotal),
@@ -352,11 +351,11 @@ const Invoice = () => {
                 discount: parseInt(discount),
                 discountAmount: parseFloat(discountAmount),
                 discountType,
-                finalTotal:
-                    (parseFloat(billTotal) + parseFloat(cgst) + parseFloat(sgst)) -
-                    (discount === "1"
-                        ? ((parseFloat(discountAmount) / 100) * (parseFloat(billTotal) + parseFloat(cgst) + parseFloat(sgst)))
-                        : parseFloat(discountAmount)),
+                // finalTotal:
+                //     (parseFloat(billTotal) + parseFloat(cgst) + parseFloat(sgst)) -
+                //     (discount === "1"
+                //         ? ((parseFloat(discountAmount) / 100) * (parseFloat(billTotal) + parseFloat(cgst) + parseFloat(sgst)))
+                //         : parseFloat(discountAmount)),
             };
 
             const billRes = await authFetch("http://localhost:8000/invoice/insertcustomerbill", {
@@ -441,9 +440,7 @@ const Invoice = () => {
                                 <div className="col-lg-4">
                                     <div className="profile-user mx-auto  mb-3">
 
-                                        <label htmlFor="profile-img-file-input" tabIndex={0}>
-                                            <img src="../assets/images/logo-dark.svg" className="img-fluid logo-lg" alt="logo" />
-                                        </label>
+                                        <img src="../assets/images/logo-dark.svg" className="img-fluid logo-lg" alt="logo" />
                                     </div>
                                 </div>
 
@@ -559,7 +556,7 @@ const Invoice = () => {
                                             <tbody id="newlink">
 
                                                 {productList.map((item, index) => (
-                                                    <tr key={item._id}>
+                                                    <tr key={item.id}>
                                                         <td className="border px-2">{index + 1}</td>
 
 
@@ -785,9 +782,7 @@ const Invoice = () => {
                                         <textarea className="form-control alert alert-info" id="exampleFormControlTextarea1" placeholder="Notes" rows={2} required defaultValue={"All accounts are to be paid within 7 days from receipt of invoice. To be paid by cheque or credit card or direct payment online. If account is not paid within 7 days the credits details supplied as confirmation of work undertaken will be charged the agreed quoted fee noted above."} />
                                     </div>
                                     <div className="hstack gap-2 justify-content-end d-print-none mt-4">
-                                        <button type="submit" className="btn btn-success"><i className="ri-printer-line" /> Save</button>
 
-                                        <a href="#" className="btn btn-primary"><i className="ri-download-2-line " /> Download Invoice</a>
                                         <button className="btn btn-primary" onClick={handleFullInvoiceSubmit}>Save Invoice</button>
 
                                     </div>
