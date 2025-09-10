@@ -430,11 +430,10 @@ const changeStatus = async (req, res) => {
         return res.status(400).json({ message: 'invalid request' });
     }
 }
-
 const importCustItems = async (req, res) => {
     try {
         if (!req.file) {
-            return res.status(400).json({ message: 'CSV file is required.' });
+            return res.status(400).json({ message: "CSV file is required." });
         }
 
         const registerId = req.user.id;
@@ -443,14 +442,14 @@ const importCustItems = async (req, res) => {
 
         fs.createReadStream(filePath)
             .pipe(csv.parse({ headers: true }))
-            .on('error', (error) => {
-                console.error('CSV parse error:', error);
-                return res.status(500).json({ message: 'CSV parsing failed' });
+            .on("error", (error) => {
+                console.error("CSV parse error:", error);
+                return res.status(500).json({ message: "CSV parsing failed" });
             })
-            .on('data', (row) => {
+            .on("data", (row) => {
                 rows.push(row);
             })
-            .on('end', async () => {
+            .on("end", async () => {
                 try {
                     let inserted = 0;
                     let updated = 0;
@@ -460,86 +459,82 @@ const importCustItems = async (req, res) => {
                         const customer = await Customers.findOne({
                             registerId,
                             customers: row.customer,
-                            deleted_at: null
+                            deleted_at: null,
                         });
 
                         const customerBill = await CustomerBill.findOne({
                             registerId,
                             billNo: row.billNo,
-                            deleted_at: null
+                            deleted_at: null,
                         });
 
                         const stock = await Stock.findOne({
                             registerId,
                             stock: row.stock,
-                            deleted_at: null
+                            deleted_at: null,
                         });
 
-                        const product = await Stock.findOne({
-                            registerId,
-                            productId: row.productName,
-                            deleted_at: null
-                        })
-
-                        if (!customer || !customerBill || !stock || !product) {
-                            console.warn(`Skipping row due to missing reference:`, row);
+                        if (!customer || !customerBill || !stock) {
+                            console.warn("Skipping row due to missing reference:", row);
                             skipped++;
                             continue;
                         }
 
+                        
                         const filter = {
                             registerId,
                             customerId: customer._id,
                             customerBillId: customerBill._id,
                             stockId: stock._id,
-                            productId: stock.productName,
+                            productId: stock.productId,
+                            deleted_at: null,
+                        };
+
+                        
+                        const itemData = {
+                            registerId,
+                            customerId: customer._id,
+                            customerBillId: customerBill._id,  
+                            stockId: stock._id,
+                            productId: stock.productId,
+                            qty: Number(row.qty) || 0,
                             rate: Number(row.rate) || 0,
                             amount: Number(row.amount) || 0,
-                            qty: Number(row.qty) || 0,
-                            deleted_at: null
+                            status: row.status,
                         };
 
-                        const existingItem = await CustomerBillItem.findOne(filter);
+                        
+                        const result = await CustomerBillItem.updateOne(
+                            filter,
+                            { $set: itemData },
+                            { upsert: true }
+                        );
 
-                        const itemData = {
-                            qty: Number(row.qty) || 0,
-                            status: row.status?.toLowerCase() || 'inactive',
-                        };
-
-                        if (existingItem) {
-                            await CustomerBillItem.updateOne({ _id: existingItem._id }, { $set: itemData });
+                        if (result.matchedCount > 0) {
                             updated++;
-                        } else {
-                            await CustomerBillItem.create({
-                                ...itemData,
-                                registerId,
-                                customerId: customer._id,
-                                customerBillId: customerBill._id,
-                                stockId: stock._id,
-                                productId: stock.productId,
-
-                            });
+                        } else if (result.upsertedCount > 0) {
                             inserted++;
                         }
                     }
 
                     fs.unlinkSync(filePath);
                     res.status(200).json({
-                        message: 'Customer bill items imported successfully.',
+                        message: "Customer bill items imported successfully.",
                         inserted,
                         updated,
-                        skipped
+                        skipped,
                     });
                 } catch (err) {
-                    console.error('Insert/update failed:', err);
-                    res.status(500).json({ message: 'Failed to import customer bill items' });
+                    console.error("Insert/update failed:", err);
+                    res.status(500).json({ message: "Failed to import customer bill items" });
                 }
             });
     } catch (err) {
-        console.error('Import failed:', err);
-        res.status(500).json({ message: 'Failed to import customer bill items' });
+        console.error("Import failed:", err);
+        res.status(500).json({ message: "Failed to import customer bill items" });
     }
 };
+
 
 const exportCustItems = async (req, res) => {
     try {
